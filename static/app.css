@@ -7,6 +7,91 @@
 
   No external dependencies — plain CSS, no preprocessor.
 */
+
+/* ---------------------------------------------------------------------------
+   Landing page styles
+   --------------------------------------------------------------------------- */
+.hero {
+  text-align: center;
+  padding: 60px 0 40px;
+}
+.hero h1 {
+  font-size: 42px;
+  margin: 0 0 16px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero .lede {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+
+.features {
+  margin: 60px 0 40px;
+}
+.features h2 {
+  text-align: center;
+  font-size: 24px;
+  margin: 0 0 32px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+.card h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--accent);
+}
+.card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.details {
+  margin: 40px 0;
+}
+.details h2 {
+  font-size: 24px;
+  margin: 0 0 20px;
+}
+.details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.details li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  line-height: 1.5;
+}
+.details li:last-child {
+  border-bottom: none;
+}
+.details strong {
+  color: var(--accent);
+}
+
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
 :root {
   --bg: #0e1116;           /* Page background */
   --panel: #171b22;        /* Card / form background */

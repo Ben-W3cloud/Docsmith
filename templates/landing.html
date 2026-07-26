@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docsmith — Automated SDK Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#000;--panel:#0A0A0A;--border:rgba(111,203,220,0.25);--cyan:#6FCBDC;--copper:#E0793C;--bone:#F5F3EC;--slate:#8FA3C4;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--bone);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);}
+  .nav-left{display:flex;align-items:center;gap:16px;}
+  .menu-btn{width:24px;height:24px;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+  .menu-btn span{display:block;height:1px;background:var(--bone);}
+  .breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);}
+  .breadcrumb span{color:var(--bone);}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.04em;}
+  .hero{padding:80px 0 60px;text-align:center;}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(32px,4.5vw,52px);line-height:1.1;max-width:18ch;margin:0 auto 40px;}
+  .diagram{display:flex;align-items:center;justify-content:center;gap:40px;margin-bottom:60px;}
+  .diagram-box{text-align:center;}
+  .diagram-icon{width:64px;height:64px;border:1px solid var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--cyan);font-size:24px;}
+  .diagram-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);letter-spacing:0.1em;}
+  .diagram-arrow{color:var(--cyan);font-size:20px;}
+  .pipeline{padding:60px 0;border-top:1px solid var(--border);}
+  .section-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:40px;}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:center;}
+  .step-icon{width:48px;height:48px;margin:0 auto 16px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:20px;}
+  .step-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;}
+  .step-desc{font-size:13px;color:var(--slate);line-height:1.5;}
+  .specs{padding:60px 0;border-top:1px solid var(--border);}
+  .specs-title{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);letter-spacing:0.15em;text-align:center;margin-bottom:30px;}
+  .spec-table{width:100%;border-collapse:collapse;}
+  .spec-table th{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:0.1em;text-align:left;padding:12px 0;border-bottom:1px solid var(--border);}
+  .spec-table td{font-size:13px;color:var(--bone);padding:14px 0;border-bottom:1px solid var(--border);}
+  .spec-table td:first-child{color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:12px;}
+  .spec-table td:nth-child(2){color:var(--slate);}
+  .cta-section{padding:60px 0;border-top:1px solid var(--border);text-align:center;}
+  .cta-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:24px;}
+  .input-row{display:flex;max-width:560px;margin:0 auto;border:1px solid var(--border);}
+  .input-row input{flex:1;background:transparent;border:none;color:var(--bone);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:14px 16px;outline:none;}
+  .input-row input::placeholder{color:var(--slate);opacity:0.7;}
+  .input-row button{background:var(--copper);border:none;color:var(--bg);font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.06em;padding:0 24px;cursor:pointer;}
+  footer{padding:30px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .footer-note,.version{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="nav-left">
+        <div class="menu-btn"><span></span><span></span><span></span></div>
+        <div class="breadcrumb"><span>Dashboard</span></div>
+      </div>
+      <div class="logo">DOCSMITH</div>
+      <div class="settings-btn">⚙</div>
+    </header>
+    <section class="hero">
+      <h1>Every SDK deserves a docs site as clean as its API.</h1>
+      <div class="diagram">
+        <div class="diagram-box">
+          <div class="diagram-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <div class="diagram-label">CODE</div>
+        </div>
+        <div class="diagram-arrow">
+          <svg width="40" height="20" viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="0" y1="10" x2="32" y2="10"></line>
+            <polyline points="26 4 34 10 26 16"></polyline>
+          </svg>
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div class="diagram-label">DOCS</div>
+        </div>
+      </div>
+    </section>
+    <section class="pipeline">
+      <h2 class="section-title">How it's forged</h2>
+      <div class="steps">
+        <div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="step-title">Fetch</div><div class="step-desc">GitHub API integration from GitHub APIs.</div></div>
+        <div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="step-title">Parse</div><div class="step-desc">Code analysis & comments from documises.</div></div>
+        <div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3m0 0l3-3m-3 3h9.5M5 12h14"/></svg></div><div class="step-title">Ship</div><div class="step-desc">Static Site generation & deployment</div></div>
+      </div>
+    </section>
+    <section class="specs">
+      <div class="specs-title">SPEC SHEET</div>
+      <table class="spec-table">
+        <tr><th>Category</th><th>Features</th><th>Specification</th></tr>
+        <tr><td>Ingestion</td><td>GitHub API integration</td><td>GitHub API</td></tr>
+        <tr><td>Detection</td><td>Code analysis & comments</td><td>Static Site generation</td></tr>
+        <tr><td>Analysis</td><td>Code analysis & comments</td><td>Easter specification</td></tr>
+        <tr><td>Output</td><td>Static Site generation</td><td>Laster specification</td></tr>
+        <tr><td>Deployment</td><td>Static Site generation</td><td>GitHub deployment</td></tr>
+      </table>
+    </section>
+    <section class="cta-section">
+      <h3 class="cta-title">Generate Documentation</h3>
+      <form id="repo-form" class="input-row">
+        <input type="text" id="repo-url" placeholder="https://github.com/username/repo" required />
+        <button type="submit">GENERATE</button>
+      </form>
+    </section>
+    <footer>
+      <div class="footer-note">Technical Credits</div>
+      <div class="version">Version 1.10</div>
+    </footer>
+  </div>
+<script>
+document.getElementById('repo-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('repo-url');
+  const raw = input.value.trim();
+  if (!raw) return;
+  let repoUrl = raw;
+  if (!/^https?:\/\//i.test(repoUrl)) repoUrl = 'https://' + repoUrl;
+  if (!/^https?:\/\/github\.com\//i.test(repoUrl)) { alert('Please enter a valid GitHub URL'); return; }
+
+  const btn = e.target.querySelector('button');
+  btn.disabled = true;
+  btn.textContent = 'QUEUED…';
+
+  try {
+    const resp = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ repo_url: repoUrl, branch: 'main' }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'HTTP ' + resp.status);
+    window.location.href = '/generate?job=' + data.job_id;
+  } catch (err) {
+    alert('Failed: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'GENERATE';
+  }
+});
+</script>
+</body>
+</html>

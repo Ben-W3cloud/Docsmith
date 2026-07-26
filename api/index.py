@@ -1,4 +1,6 @@
-"""Flask entry point for the SDK Auto-Doc Generator.
+from __future__ import annotations
+
+b"""Flask entry point for the SDK Auto-Doc Generator.
 
 This file is the single web server for both local development and Vercel's
 serverless Python runtime.  All HTTP routes live here; the heavy lifting
@@ -13,7 +15,6 @@ working directory is not guaranteed, so we manually add the project root to
 ``sys.path`` before importing ``pipeline``.  See ``vercel.json`` for the
 routing and runtime configuration.
 """
-from __future__ import annotations
 
 import os
 import sys
@@ -64,9 +65,16 @@ app = Flask(
 # ---------------------------------------------------------------------------
 
 @app.route("/")
-def index():
-    """Serve the single-page frontend form."""
-    return render_template("index.html")
+def landing():
+    """Serve the marketing landing page."""
+    return render_template("landing.html")
+
+
+@app.route("/generate")
+def generate_form():
+    """Serve the repo-URL input form, optionally with a job_id to poll."""
+    job_id = request.args.get("job")
+    return render_template("index.html", initial_job_id=job_id)
 
 
 @app.route("/api/generate", methods=["POST"])

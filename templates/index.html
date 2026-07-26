@@ -1,153 +1,219 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SDK Auto-Doc Generator</title>
-  <!--
-    Frontend stylesheet.  Lives in ``static/app.css`` at the project root.
-    Flask's ``url_for`` resolves the correct path even when served from Vercel.
-  -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Status — Docsmith</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#000;--panel:#0A0A0A;--border:rgba(111,203,220,0.25);--cyan:#6FCBDC;--copper:#E0793C;--bone:#F5F3EC;--slate:#8FA3C4;--ok:#4ade80;--err:#f87171;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--bone);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);}
+  .nav-left{display:flex;align-items:center;gap:16px;}
+  .menu-btn{width:24px;height:24px;display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer;}
+  .menu-btn span{display:block;height:1px;background:var(--bone);}
+  .breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);}
+  .breadcrumb span{color:var(--bone);}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.04em;}
+  .settings-btn{width:24px;height:24px;cursor:pointer;opacity:0.7;}
+
+  .dashboard{padding:40px 0;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:20px;}
+  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .job-id{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;}
+  .status-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;padding:6px 12px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);}
+  .status-badge.in-progress{color:var(--cyan);}
+  .status-badge.done{color:var(--ok);border-color:var(--ok);}
+  .status-badge.error{color:var(--err);border-color:var(--err);}
+
+  .progress-section{margin-top:20px;}
+  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);margin-bottom:8px;}
+  .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--cyan);width:0%;transition:width 0.3s ease;}
+  .progress-text{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);margin-top:6px;}
+
+  .section-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin:32px 0 16px;padding-top:24px;border-top:1px solid var(--border);}
+  .section-title:first-child{border-top:none;padding-top:0;}
+
+  .input-summary{display:grid;gap:12px;}
+  .summary-row{display:flex;gap:12px;font-size:13px;}
+  .summary-label{font-family:'IBM Plex Mono',monospace;color:var(--slate);min-width:140px;}
+  .summary-value{color:var(--bone);word-break:break-all;}
+
+  .detection-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  .confidence-score{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;color:var(--cyan);line-height:1;}
+  .confidence-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);margin-top:4px;}
+  .detection-meta{font-size:13px;color:var(--slate);line-height:1.6;}
+  .detection-meta strong{color:var(--bone);}
+  .heuristics-list{list-style:none;padding:0;margin-top:12px;}
+  .heuristics-list li{padding:6px 0;font-size:13px;color:var(--bone);display:flex;align-items:center;gap:8px;}
+  .heuristics-list li::before{content:'•';color:var(--copper);font-weight:700;}
+
+  .success-card{border-color:var(--ok);}
+  .success-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--ok);margin-bottom:8px;}
+  .success-desc{font-size:13px;color:var(--slate);margin-bottom:20px;}
+  .btn-group{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.04em;padding:10px 18px;border-radius:6px;border:none;cursor:pointer;text-decoration:none;display:inline-block;}
+  .btn-primary{background:var(--copper);color:var(--bg);}
+  .btn-primary:hover{background:#ef8a4d;}
+  .btn-secondary{background:transparent;color:var(--cyan);border:1px solid var(--cyan);}
+  .btn-secondary:hover{background:rgba(111,203,220,0.1);}
+
+  .log-section{margin-top:20px;}
+  .log-header{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;}
+  .log-box{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px;max-height:300px;overflow:auto;}
+  .log-box pre{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:0;}
+
+  .error-card{border-color:var(--err);}
+  .error-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--err);margin-bottom:8px;}
+  .error-message{font-size:13px;color:var(--slate);}
+
+  @media (max-width:760px){
+    .detection-grid{grid-template-columns:1fr;}
+    .btn-group{flex-direction:column;}
+  }
+</style>
 </head>
 <body>
-  <!--
-    Main layout: a single-page form for repo URL input, plus a status panel
-    that appears once a job is submitted.  No framework — vanilla JS + fetch.
-  -->
-  <main class="wrap">
+  <div class="wrap">
     <header>
-      <h1>SDK Auto-Doc Generator</h1>
-      <p class="lede">
-        Paste a GitHub URL. We fetch the repo via the GitHub API (no clone),
-        detect whether it&rsquo;s an SDK, extract an AST-based IR, generate
-        MkDocs Material docs section by section, and hand you a zip.
-      </p>
+      <div class="nav-left">
+        <div class="menu-btn"><span></span><span></span><span></span></div>
+        <div class="breadcrumb"><span>Dashboard</span> / <span id="job-id-bread">New Job</span></div>
+      </div>
+      <div class="logo">DOCSMITH</div>
+      <div class="settings-btn">⚙</div>
     </header>
 
-    <!--
-      Submission form:
-        - repo_url: required, validated client-side + server-side
-        - branch: optional, defaults to "main"
-      On submit, POST to /api/generate and start polling /api/status/<id>.
-    -->
-    <form id="gen-form" autocomplete="off">
-      <label>
-        <span>Repository URL</span>
-        <input type="url" id="repo_url" name="repo_url"
-               placeholder="https://github.com/owner/repo" required />
-      </label>
-      <label>
-        <span>Branch</span>
-        <input type="text" id="branch" name="branch" value="main" />
-      </label>
-      <button type="submit" id="submit-btn">Generate docs</button>
-    </form>
-
-    <!--
-      Job status panel — hidden until a job is submitted.
-      Shows: job ID, detection result, progress log, download link.
-    -->
-    <section id="job" hidden>
-      <h2>Job <code id="job-id"></code></h2>
-      <p class="status">Status: <strong id="job-status">…</strong></p>
-      <div id="detection" class="detection" hidden></div>
-      <div id="download-box" hidden>
-        <a id="download-link" class="btn-primary" href="#">Download docs.zip</a>
+    <div class="dashboard" id="dashboard">
+      <div class="card">
+        <div class="card-header">
+          <div class="job-id">Job ID: <span id="job-id">--</span></div>
+          <div class="status-badge in-progress" id="status-badge">IN PROGRESS</div>
+        </div>
+        <div class="progress-section">
+          <div class="progress-label">Generation Progress</div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="progress-text" id="progress-text">0%</div>
+        </div>
       </div>
-      <h3>Progress</h3>
-      <pre id="log"></pre>
-    </section>
-  </main>
 
-  <!--
-    Vanilla JS — no build step, no framework.  Handles:
-      1. Form submission → POST /api/generate
-      2. Polling → GET /api/status/<id> every 1.5s
-      3. Rendering detection results, progress log, download link
-  -->
-  <script>
-  // Shorthand for querySelector
-  const $ = (s) => document.querySelector(s);
-  const form = $("#gen-form");
-  const btn = $("#submit-btn");
-  const jobSection = $("#job");
-  let poller = null;
+      <div class="card" id="input-summary-card">
+        <div class="section-title">Input Summary</div>
+        <div class="input-summary">
+          <div class="summary-row"><div class="summary-label">Target Repository</div><div class="summary-value" id="repo-url">--</div></div>
+          <div class="summary-row"><div class="summary-label">Branch</div><div class="summary-value" id="branch">main</div></div>
+        </div>
+      </div>
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    btn.disabled = true;
-    $("#log").textContent = "";
-    $("#detection").hidden = true;
-    $("#download-box").hidden = true;
+      <div class="card" id="detection-card" hidden>
+        <div class="section-title">SDK Detection Results</div>
+        <div class="detection-grid">
+          <div>
+            <div class="confidence-score" id="confidence-score">--%</div>
+            <div class="confidence-label">Confidence score</div>
+          </div>
+          <div>
+            <div class="detection-meta">
+              <strong>Method Used:</strong> <span id="detection-method">--</span><br>
+              <strong>Detected Heuristics:</strong>
+              <ul class="heuristics-list" id="heuristics-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    try {
-      // Submit the job
-      const resp = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          repo_url: $("#repo_url").value,
-          branch: $("#branch").value || "main",
-        }),
+      <div class="card success-card" id="success-card" hidden>
+        <div class="success-title">Success!</div>
+        <div class="success-desc">Build successful. Finalizing output.</div>
+        <div class="btn-group">
+          <a class="btn btn-primary" id="download-btn" href="#">Download docs.zip</a>
+          <button class="btn btn-secondary" onclick="alert('Preview would open in a new tab')">View Live Preview</button>
+        </div>
+      </div>
+
+      <div class="card error-card" id="error-card" hidden>
+        <div class="error-title">Error</div>
+        <div class="error-message" id="error-message">Something went wrong.</div>
+      </div>
+
+      <div class="log-section" id="log-section" hidden>
+        <div class="log-header">Progress Log</div>
+        <div class="log-box"><pre id="log"></pre></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const urlParams = new URLSearchParams(window.location.search);
+const jobId = urlParams.get('job');
+
+if (!jobId) {
+  window.location.href = '/';
+}
+
+$('#job-id').textContent = jobId;
+$('#job-id-bread').textContent = jobId;
+
+let poller = null;
+
+async function pollStatus(id) {
+  try {
+    const r = await fetch('/api/status/' + id);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+
+    $('#status-badge').textContent = (j.status || 'UNKNOWN').toUpperCase();
+    $('#status-badge').className = 'status-badge ' + (j.status || '');
+
+    if (j.progress && j.progress.length) {
+      $('#log-section').hidden = false;
+      $('#log').textContent = j.progress.join('\n');
+    }
+
+    if (j.detection) {
+      const d = j.detection;
+      $('#detection-card').hidden = false;
+      $('#confidence-score').textContent = Math.round((d.score || 0) * 100) + '%';
+      $('#detection-method').textContent = d.method || '--';
+      const list = $('#heuristics-list');
+      list.innerHTML = '';
+      (d.reasons || []).forEach(r => {
+        const li = document.createElement('li');
+        li.textContent = r;
+        list.appendChild(li);
       });
-      const data = await resp.json();
-      if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
-
-      // Show the status panel and start polling
-      jobSection.hidden = false;
-      $("#job-id").textContent = data.job_id;
-      $("#job-status").textContent = data.status;
-      if (poller) clearInterval(poller);
-      poller = setInterval(() => pollStatus(data.job_id), 1500);
-    } catch (err) {
-      alert("Failed: " + err.message);
-    } finally {
-      btn.disabled = false;
     }
-  });
 
-  async function pollStatus(id) {
-    try {
-      const r = await fetch(`/api/status/${id}`);
-      const j = await r.json();
-      $("#job-status").textContent = j.status;
-      $("#log").textContent = (j.progress || []).join("\n");
-
-      // Render SDK detection result if present
-      if (j.detection) {
-        const d = j.detection;
-        const box = $("#detection");
-        box.hidden = false;
-        box.innerHTML =
-          `<h3>SDK detection</h3>
-            <p><strong>${d.is_sdk ? "Detected as SDK" : "Not detected as SDK"}</strong>
-               &middot; score ${d.score} &middot; method: ${d.method}</p>
-            <ul>${(d.reasons || []).map(r => `<li>${escapeHtml(r)}</li>`).join("")}</ul>`;
-      }
-
-      // Job complete → show download link
-      if (j.status === "done") {
-        clearInterval(poller);
-        poller = null;
-        $("#download-box").hidden = false;
-        $("#download-link").href = j.download_url;
-      } else if (j.status === "error") {
-        clearInterval(poller);
-        poller = null;
-      }
-    } catch (e) {
-      // Transient network error — keep polling silently
+    if (j.status === 'done') {
+      clearInterval(poller);
+      poller = null;
+      $('#success-card').hidden = false;
+      $('#download-btn').href = j.download_url || '#';
+      $('#progress-fill').style.width = '100%';
+      $('#progress-text').textContent = '100%';
+    } else if (j.status === 'error') {
+      clearInterval(poller);
+      poller = null;
+      $('#error-card').hidden = false;
+      $('#error-message').textContent = (j.error || 'Unknown error');
+      $('#status-badge').className = 'status-badge error';
+    } else {
+      const pct = j.progress_percent || 0;
+      $('#progress-fill').style.width = pct + '%';
+      $('#progress-text').textContent = pct + '%';
     }
+  } catch (e) {
+    console.error('Poll error:', e);
   }
+}
 
-  // Escape HTML to prevent XSS when rendering user-controlled strings
-  function escapeHtml(s) {
-    const str = String(s);
-    return str.replace(/&/g, '&').replace(/</g, '<')
-              .replace(/>/g, '>').replace(/"/g, '"')
-              .replace(/'/g, '&#39;');
-  }
-  </script>
+poller = setInterval(() => pollStatus(jobId), 1500);
+pollStatus(jobId);
+</script>
 </body>
 </html>
