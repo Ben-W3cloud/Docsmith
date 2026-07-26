@@ -1,0 +1,28 @@
+# ---------------------------------------------------------------------------
+# Core dependencies
+# ---------------------------------------------------------------------------
+# Web server
+flask==3.0.3
+
+# HTTP client for GitHub API calls
+requests==2.32.3
+
+# Static site generator + Material theme
+mkdocs==1.6.1
+mkdocs-material==9.5.44
+
+# OpenAI-compatible LLM client (supports OpenAI, NVIDIA, Groq, etc.)
+openai==1.54.4
+
+# Load .env files in local development
+python-dotenv==1.0.1
+
+# Production WSGI server (for non-Vercel deployments)
+gunicorn==23.0.0
+
+# ---------------------------------------------------------------------------
+# Removed: anthropic==0.39.0
+# Reason: OpenAI-only. The codebase now uses the OpenAI client exclusively,
+# reading BASE_URL / API_KEY / MODEL from the environment. This matches the
+# .env configuration and simplifies the provider logic.
+# ---------------------------------------------------------------------------

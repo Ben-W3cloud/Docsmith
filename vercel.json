@@ -1,0 +1,32 @@
+{
+  "_comment": "Vercel deployment configuration for SDK Auto-Doc Generator",
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.11",
+        "_comment": "50mb maxLambdaSize needed for openai + requests + mkdocs deps"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/static/(.*)", "dest": "/api/index.py" },
+    { "src": "/(.*)", "dest": "/api/index.py" }
+  ],
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "_comment": "60s max on Pro tier; Hobby tier is 10s. Pipeline runs in background thread."
+    }
+  },
+  "env": {
+    "GITHUB_TOKEN": "@github_token",
+    "BASE_URL": "@base_url",
+    "API_KEY": "@llm_api_key",
+    "MODEL": "@llm_model",
+    "_comment": "LLM_PROVIDER removed — OpenAI-only. Env vars now match .env exactly."
+  }
+}

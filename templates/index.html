@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SDK Auto-Doc Generator</title>
+  <!--
+    Frontend stylesheet.  Lives in ``static/app.css`` at the project root.
+    Flask's ``url_for`` resolves the correct path even when served from Vercel.
+  -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+</head>
+<body>
+  <!--
+    Main layout: a single-page form for repo URL input, plus a status panel
+    that appears once a job is submitted.  No framework — vanilla JS + fetch.
+  -->
+  <main class="wrap">
+    <header>
+      <h1>SDK Auto-Doc Generator</h1>
+      <p class="lede">
+        Paste a GitHub URL. We fetch the repo via the GitHub API (no clone),
+        detect whether it&rsquo;s an SDK, extract an AST-based IR, generate
+        MkDocs Material docs section by section, and hand you a zip.
+      </p>
+    </header>
+
+    <!--
+      Submission form:
+        - repo_url: required, validated client-side + server-side
+        - branch: optional, defaults to "main"
+      On submit, POST to /api/generate and start polling /api/status/<id>.
+    -->
+    <form id="gen-form" autocomplete="off">
+      <label>
+        <span>Repository URL</span>
+        <input type="url" id="repo_url" name="repo_url"
+               placeholder="https://github.com/owner/repo" required />
+      </label>
+      <label>
+        <span>Branch</span>
+        <input type="text" id="branch" name="branch" value="main" />
+      </label>
+      <button type="submit" id="submit-btn">Generate docs</button>
+    </form>
+
+    <!--
+      Job status panel — hidden until a job is submitted.
+      Shows: job ID, detection result, progress log, download link.
+    -->
+    <section id="job" hidden>
+      <h2>Job <code id="job-id"></code></h2>
+      <p class="status">Status: <strong id="job-status">…</strong></p>
+      <div id="detection" class="detection" hidden></div>
+      <div id="download-box" hidden>
+        <a id="download-link" class="btn-primary" href="#">Download docs.zip</a>
+      </div>
+      <h3>Progress</h3>
+      <pre id="log"></pre>
+    </section>
+  </main>
+
+  <!--
+    Vanilla JS — no build step, no framework.  Handles:
+      1. Form submission → POST /api/generate
+      2. Polling → GET /api/status/<id> every 1.5s
+      3. Rendering detection results, progress log, download link
+  -->
+  <script>
+  // Shorthand for querySelector
+  const $ = (s) => document.querySelector(s);
+  const form = $("#gen-form");
+  const btn = $("#submit-btn");
+  const jobSection = $("#job");
+  let poller = null;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    $("#log").textContent = "";
+    $("#detection").hidden = true;
+    $("#download-box").hidden = true;
+
+    try {
+      // Submit the job
+      const resp = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          repo_url: $("#repo_url").value,
+          branch: $("#branch").value || "main",
+        }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+
+      // Show the status panel and start polling
+      jobSection.hidden = false;
+      $("#job-id").textContent = data.job_id;
+      $("#job-status").textContent = data.status;
+      if (poller) clearInterval(poller);
+      poller = setInterval(() => pollStatus(data.job_id), 1500);
+    } catch (err) {
+      alert("Failed: " + err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  async function pollStatus(id) {
+    try {
+      const r = await fetch(`/api/status/${id}`);
+      const j = await r.json();
+      $("#job-status").textContent = j.status;
+      $("#log").textContent = (j.progress || []).join("\n");
+
+      // Render SDK detection result if present
+      if (j.detection) {
+        const d = j.detection;
+        const box = $("#detection");
+        box.hidden = false;
+        box.innerHTML =
+          `<h3>SDK detection</h3>
+            <p><strong>${d.is_sdk ? "Detected as SDK" : "Not detected as SDK"}</strong>
+               &middot; score ${d.score} &middot; method: ${d.method}</p>
+            <ul>${(d.reasons || []).map(r => `<li>${escapeHtml(r)}</li>`).join("")}</ul>`;
+      }
+
+      // Job complete → show download link
+      if (j.status === "done") {
+        clearInterval(poller);
+        poller = null;
+        $("#download-box").hidden = false;
+        $("#download-link").href = j.download_url;
+      } else if (j.status === "error") {
+        clearInterval(poller);
+        poller = null;
+      }
+    } catch (e) {
+      // Transient network error — keep polling silently
+    }
+  }
+
+  // Escape HTML to prevent XSS when rendering user-controlled strings
+  function escapeHtml(s) {
+    const str = String(s);
+    return str.replace(/&/g, '&').replace(/</g, '<')
+              .replace(/>/g, '>').replace(/"/g, '"')
+              .replace(/'/g, '&#39;');
+  }
+  </script>
+</body>
+</html>

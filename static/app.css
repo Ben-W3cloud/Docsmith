@@ -1,0 +1,126 @@
+/*
+  SDK Auto-Doc Generator — frontend stylesheet
+
+  Dark theme using CSS custom properties for easy colour changes.
+  Layout is a single centred column (max-width 780px) with a card-based
+  form and a status panel that appears after job submission.
+
+  No external dependencies — plain CSS, no preprocessor.
+*/
+:root {
+  --bg: #0e1116;           /* Page background */
+  --panel: #171b22;        /* Card / form background */
+  --border: #262c36;       /* Subtle borders */
+  --text: #e6edf3;         /* Primary text */
+  --muted: #9aa5b1;        /* Secondary / label text */
+  --accent: #7c9cff;       /* Primary accent (links, focus) */
+  --accent-2: #b48cff;     /* Secondary accent (gradient) */
+  --ok: #4ade80;           /* Success / download button */
+  --err: #f87171;          /* Error state */
+}
+
+/* ---------------------------------------------------------------------------
+   Reset & base
+   --------------------------------------------------------------------------- */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+   Layout
+   --------------------------------------------------------------------------- */
+.wrap { max-width: 780px; margin: 0 auto; padding: 48px 20px 80px; }
+
+/* ---------------------------------------------------------------------------
+   Header
+   --------------------------------------------------------------------------- */
+header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.lede { color: var(--muted); margin: 0 0 32px; }
+
+/* ---------------------------------------------------------------------------
+   Form
+   --------------------------------------------------------------------------- */
+form {
+  display: grid; gap: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+label { display: grid; gap: 6px; }
+label span { color: var(--muted); font-size: 13px; }
+input[type="url"], input[type="text"] {
+  width: 100%;
+  background: #0b0e13; color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 14px;
+}
+input:focus { outline: none; border-color: var(--accent); }
+button {
+  justify-self: start;
+  background: var(--accent);
+  color: #0b0e13;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ---------------------------------------------------------------------------
+   Job status panel
+   --------------------------------------------------------------------------- */
+#job {
+  margin-top: 32px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+#job h2 { margin: 0 0 8px; font-size: 18px; }
+#job code { color: var(--accent); }
+.status strong { color: var(--ok); }
+.detection ul { padding-left: 20px; color: var(--muted); }
+
+/* ---------------------------------------------------------------------------
+   Progress log
+   --------------------------------------------------------------------------- */
+pre#log {
+  background: #0b0e13;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 320px;
+  overflow: auto;
+  font: 12.5px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------------------------------------------------------------------------
+   Download button
+   --------------------------------------------------------------------------- */
+.btn-primary {
+  display: inline-block;
+  background: var(--ok);
+  color: #062b13;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 8px 0 16px;
+}
